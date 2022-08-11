@@ -520,6 +520,16 @@ class TestDag:
 
         assert task.test_field == ['{{ ds }}', 'some_string']
 
+    def test_resolve_template_files_catches_prepare_template_exceptions(self):
+        def _prepare_template(*args, **kwargs):
+            raise Exception("This exception should be catched")
+
+        with DAG("test-dag", start_date=DEFAULT_DATE):
+            task = EmptyOperator(task_id="op1")
+
+        task.prepare_template = _prepare_template
+        task.resolve_template_files()
+
     def test_following_previous_schedule(self):
         """
         Make sure DST transitions are properly observed

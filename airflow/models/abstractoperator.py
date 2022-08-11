@@ -189,7 +189,10 @@ class AbstractOperator(LoggingMixin, DAGNode):
                                 content[i] = env.loader.get_source(env, item)[0]  # type: ignore
                             except Exception:
                                 self.log.exception("Failed to get source %s", item)
-        self.prepare_template()
+        try:
+            self.prepare_template()
+        except Exception as e:
+            self.log.exception("Failed to prepare template: %s", e)
 
     def get_direct_relative_ids(self, upstream: bool = False) -> Set[str]:
         """Get direct relative IDs to the current task, upstream or downstream."""
